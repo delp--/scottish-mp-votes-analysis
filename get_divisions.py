@@ -4,6 +4,7 @@ Output division names and URLs to a CSV file.
 '''
 import csv
 import requests
+import unicodedata
 from pyquery import PyQuery as pq
 
 PW_URL = 'http://www.publicwhip.org.uk/'
@@ -13,7 +14,7 @@ output = csv.DictWriter(open('./data/commons_divisions_since_1997.csv', 'w'),
                         fieldnames=fieldnames)
 output.writeheader()
 
-for year in [2010, 2005, 2001, 1997]:
+for year in [2017, 2015, 2010, 2005, 2001, 1997]:
     url = '%s%s%s' % (PW_URL, 'divisions.php?rdisplay=', year)
     response = requests.get(url)
     doc = pq(response.content)
@@ -25,7 +26,7 @@ for year in [2010, 2005, 2001, 1997]:
             entry = {}
             subject = d('td:eq(3)')
             entry['parliament'] = year
-            entry['date'] = d('td:eq(1)').text().encode('utf-8')
-            entry['name'] = subject.text().encode('utf-8')
-            entry['url'] = '%s%s&display=allvotes' % (PW_URL, subject('a').attr('href').encode('utf-8'))
+            entry['date'] = unicodedata.normalize("NFKD", d('td:eq(1)').text())
+            entry['name'] = unicodedata.normalize("NFKD", subject.text())
+            entry['url'] = '%s%s&display=allvotes' % (PW_URL, unicodedata.normalize("NFKD", subject('a').attr('href') ))
             output.writerow(entry)

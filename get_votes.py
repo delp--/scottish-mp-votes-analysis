@@ -31,7 +31,7 @@ output.writeheader()
 # Load in the Commons divisions.
 reader = csv.DictReader(open('./data/commons_divisions_since_1997.csv'))
 for row in reader:
-    print row['date'], row['name']
+    print (row['date'], row['name'])
     # if row['url'] != 'http://www.publicwhip.org.uk/division.php?date=2003-07-08&number=280&display=allvotes':
     #     continue
 
@@ -74,18 +74,19 @@ for row in reader:
                 row['ayes_noscotland'] += 1
                 row['noes_noscotland'] += 1
         else:
-            print 'Unknown vote type:', value
+            print ('Unknown vote type:'), value
 
     # Check whether no Scottish votes would have changed the result.
     carried_by_ayes = (row['ayes'] > row['noes'])
-    carried_by_ayes_noscotland = (row['ayes_noscotland'] > row['noes_noscotland'])
+    carried_by_ayes_noscotland = (
+        row['ayes_noscotland'] > row['noes_noscotland'])
     row['different'] = (carried_by_ayes != carried_by_ayes_noscotland)
     if row['different']:
-        print vote_name
-        print '!!!!!!!! DIFFERENT RESULTS!!!!!!!'
+        print (vote_name)
+        print ('!!!!!!!! DIFFERENT RESULTS!!!!!!!')
         carried = 'Ayes' if carried_by_ayes else 'Noes'
         carried_noscotland = 'Ayes' if carried_by_ayes_noscotland else 'Noes'
-        print 'Actual results: Carried by %s: %s ayes to %s noes' % (carried, row['ayes'], row['noes'])
-        print 'Without Scotland: Carried by %s: %s ayes to %s noes\n' % (carried_noscotland, row['ayes_noscotland'], row['noes_noscotland'])
+        print ('Actual results: Carried by %s: %s ayes to %s noes' % (carried, row['ayes'], row['noes']))
+        print ('Without Scotland: Carried by %s: %s ayes to %s noes\n' % (carried_noscotland, row['ayes_noscotland'], row['noes_noscotland']))
 
     output.writerow(row)
